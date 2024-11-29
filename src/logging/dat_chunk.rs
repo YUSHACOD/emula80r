@@ -2,7 +2,7 @@ use chrono::Local;
 
 /// To dump data in xxd-like hex format and return as a string
 pub fn dump_data(data: &[u8], type_str: &str) -> String {
-    const BYTES_PER_LINE: usize = 16; // Number of bytes per line
+    const BYTES_PER_LINE: usize = 16;
     let mut result = String::new();
 
     let timestamp = Local::now().format("%Y_%m_%d_%H_%M_%S").to_string();

@@ -2,6 +2,8 @@ use crate::{ioutils, logging::dat_chunk};
 use chrono::Local;
 use std::io;
 
+mod utils;
+
 /// Flags for 8080 cpu
 struct ConditionFlags {
     /// if the last arithmetic operation results 0
@@ -135,7 +137,7 @@ impl CPU {
 
     pub fn get_dbg_string(&self) -> String {
         format!(
-"+++++++++++++++++++++++++++++++++++++++
+            "+++++++++++++++++++++++++++++++++++++++
 [CPU state]:\n
 \t{}\n
 \t{}\n
