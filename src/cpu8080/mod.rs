@@ -2,6 +2,7 @@ use crate::{ioutils, logging::dat_chunk};
 use chrono::Local;
 use std::io;
 
+mod instructions;
 mod utils;
 
 /// Flags for 8080 cpu
@@ -137,7 +138,8 @@ impl CPU {
 
     pub fn get_dbg_string(&self) -> String {
         format!(
-            "+++++++++++++++++++++++++++++++++++++++
+"
++++++++++++++++++++++++++++++++++++++++
 [CPU state]:\n
 \t{}\n
 \t{}\n
@@ -145,7 +147,8 @@ impl CPU {
 \t[Instruction Pointer]:\t[{}]\n
 \t[Io Port]:\t\t[{}]\n
 \t[Enabled]:\t\t[{}]
-+++++++++++++++++++++++++++++++++++++++\n",
++++++++++++++++++++++++++++++++++++++++
+",
             &self.flags.get_dbg_string(),
             &self.registers.get_dbg_string(),
             &self.stack_pointer,
