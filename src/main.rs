@@ -18,7 +18,6 @@ fn main() -> io::Result<()> {
 
     info!("{}", cpu.get_dbg_string());
 
-
     // cpu.get_dbg_memory()?;
     // cpu.get_dbg_io_table()?;
     //

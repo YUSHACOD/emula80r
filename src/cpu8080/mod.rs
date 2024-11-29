@@ -2,6 +2,7 @@ use crate::{ioutils, logging::dat_chunk};
 use chrono::Local;
 use std::io;
 
+mod instruction_tests;
 mod instructions;
 mod utils;
 

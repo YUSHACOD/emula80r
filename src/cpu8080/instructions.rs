@@ -3,15 +3,18 @@ use log::error;
 
 impl CPU {
     pub fn execute_instruction(&mut self) {
-        let instruction = self.memory[self.inst_pointer as usize];
+        let inst_pointer = self.inst_pointer as usize;
+        let instruction = self.memory[inst_pointer];
 
         match instruction {
             0x00 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.inst_pointer += 1;
             }
 
             0x01 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.b = self.memory[inst_pointer + 1];
+                self.registers.c = self.memory[inst_pointer + 2];
+                self.inst_pointer += 3;
             }
 
             0x02 => {
