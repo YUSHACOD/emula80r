@@ -18,7 +18,8 @@ impl CPU {
             }
 
             0x02 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let location = ((self.registers.b as u16) << 8) | (self.registers.c as u16);
+                self.memory[location as usize] = self.registers.a;
             }
 
             0x03 => {

@@ -1,5 +1,5 @@
 use crate::ioutils;
-use log::{error, info};
+use log::info;
 use std::io;
 
 use super::CPU;
@@ -12,7 +12,7 @@ enum Operation {
 
 impl CPU {
     /// Update Flags with arithmetic operation
-    fn update_flags(
+    fn alu_operation(
         &mut self,
         operation: Operation,
         operand1: u8,

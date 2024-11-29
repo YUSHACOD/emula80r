@@ -76,13 +76,13 @@ impl Registers {
     fn get_dbg_string(&self) -> String {
         format!(
             "[Registers]:
-\t\ta:\t\t[{}]
-\t\tb:\t\t[{}]
-\t\tc:\t\t[{}]
-\t\td:\t\t[{}]
-\t\te:\t\t[{}]
-\t\th:\t\t[{}]
-\t\tl:\t\t[{}]",
+\t\ta:\t\t[0x{:02X}]
+\t\tb:\t\t[0x{:02X}]
+\t\tc:\t\t[0x{:02X}]
+\t\td:\t\t[0x{:02X}]
+\t\te:\t\t[0x{:02X}]
+\t\th:\t\t[0x{:02X}]
+\t\tl:\t\t[0x{:02X}]",
             &self.a, &self.b, &self.c, &self.d, &self.e, &self.h, &self.l
         )
     }
@@ -144,9 +144,9 @@ impl CPU {
 [CPU state]:\n
 \t{}\n
 \t{}\n
-\t[Stack Pointer]:\t[{}]\n
-\t[Instruction Pointer]:\t[{}]\n
-\t[Io Port]:\t\t[{}]\n
+\t[Stack Pointer]:\t[0x{:04X}]\n
+\t[Instruction Pointer]:\t[0x{:04X}]\n
+\t[Io Port]:\t\t[0x{:02X}]\n
 \t[Enabled]:\t\t[{}]
 +++++++++++++++++++++++++++++++++++++++
 ",
