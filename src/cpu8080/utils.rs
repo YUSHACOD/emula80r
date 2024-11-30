@@ -5,14 +5,14 @@ use std::io;
 use super::CPU;
 
 #[derive(Debug)]
-enum Operation {
+pub enum Operation {
     Add,
     Sub,
 }
 
 impl CPU {
     /// Update Flags with arithmetic operation
-    fn alu_operation(
+    pub fn alu_operation(
         &mut self,
         operation: Operation,
         operand1: u8,
@@ -44,12 +44,18 @@ impl CPU {
 
         self.flags.aux_carry = match operation {
             Operation::Add => ((operand1 & 0x0F) + (operand2 & 0x0F) + carry_in_value) > 0x0F,
-            Operation::Sub => (operand1 & 0x0F) < ((operand2 & 0x0F) + carry_in_value),
+            Operation::Sub => {
+                let borrow = (operand2 & 0x0F) + carry_in_value;
+                (operand1 & 0x0F) < borrow
+            }
         };
-        info!("Flags updated");
+
+        info!("Flags updated: zero: [{}], sign: [{}], parity: [{}], carry: [{}], aux_carry: [{}]",
+              self.flags.zero, self.flags.sign, self.flags.parity, self.flags.carry, self.flags.aux_carry);
 
         result
     }
+
 
     pub fn load_program(&mut self, file_name: &str, address: u8) -> io::Result<()> {
         let mut bytes: Vec<u8> = Vec::new();

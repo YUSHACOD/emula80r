@@ -6,5 +6,4 @@ edition = "2021"
 [dependencies]
 chrono = "*"
 log = "*"
-env_logger = "*"
 log4rs = "*"

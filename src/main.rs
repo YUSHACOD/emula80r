@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use log4rs;
+
 use log::info;
 use std::io;
 

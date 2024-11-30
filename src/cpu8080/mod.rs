@@ -2,8 +2,24 @@ use crate::{ioutils, logging::dat_chunk};
 use chrono::Local;
 use std::io;
 
-mod instruction_tests;
-mod instructions;
+mod instruction;
+mod instruction_tests_0;
+mod instructions_0;
+mod instructions_1;
+mod instructions_2;
+mod instructions_3;
+mod instructions_4;
+mod instructions_5;
+mod instructions_6;
+mod instructions_7;
+mod instructions_8;
+mod instructions_9;
+mod instructions_a;
+mod instructions_b;
+mod instructions_c;
+mod instructions_d;
+mod instructions_e;
+mod instructions_f;
 mod utils;
 
 /// Flags for 8080 cpu
@@ -139,7 +155,7 @@ impl CPU {
 
     pub fn get_dbg_string(&self) -> String {
         format!(
-"
+            "
 +++++++++++++++++++++++++++++++++++++++
 [CPU state]:\n
 \t{}\n
@@ -160,7 +176,7 @@ impl CPU {
     }
 
     pub fn get_dbg_memory(&self) -> io::Result<()> {
-        let hex_dump = dat_chunk::dump_data(&self.memory.as_slice(), "Memory");
+        let hex_dump = dat_chunk::dump_data(self.memory.as_slice(), "Memory");
         ioutils::write_file(&Some("memory_dump.bin".to_string()), hex_dump.as_bytes())?;
         Ok(())
     }
@@ -168,12 +184,12 @@ impl CPU {
     pub fn dump_memory_to_file(&self) -> io::Result<()> {
         let timestamp = Local::now().format("%Y_%m_%d_%H_%M_%S").to_string();
         let filename = format!("raw_memory_dump_{}.bin", timestamp);
-        ioutils::write_file(&Some(filename), &self.memory.as_slice())?;
+        ioutils::write_file(&Some(filename), self.memory.as_slice())?;
         Ok(())
     }
 
     pub fn get_dbg_io_table(&self) -> io::Result<()> {
-        let hex_dump = dat_chunk::dump_data(&self.io_table.as_slice(), "IO_table");
+        let hex_dump = dat_chunk::dump_data(self.io_table.as_slice(), "IO_table");
         ioutils::write_file(&Some("io_table.bin".to_string()), hex_dump.as_bytes())?;
         Ok(())
     }
@@ -181,7 +197,7 @@ impl CPU {
     pub fn dump_io_table_to_file(&self) -> io::Result<()> {
         let timestamp = Local::now().format("%Y_%m_%d_%H_%M_%S").to_string();
         let filename = format!("raw_io_table_dump_{}.bin", timestamp);
-        ioutils::write_file(&Some(filename), &self.io_table.as_slice())?;
+        ioutils::write_file(&Some(filename), self.io_table.as_slice())?;
         Ok(())
     }
 }
