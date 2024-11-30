@@ -42,43 +42,77 @@ impl CPU {
             }
 
             0x06 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.b = self.memory[inst_pointer + 1];
+                self.inst_pointer += 1;
             }
 
+            // 0x07	RLC	1	CY	A = A << 1; bit 0 = prev bit 7; CY = prev bit 7
             0x07 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.flags.carry = (self.registers.a & 0b10000000) == 0b10000000;
+
+                let msb = if self.flags.carry { 1 } else { 0 };
+
+                self.registers.a = (self.registers.a << 1) + msb;
+                self.inst_pointer += 1;
             }
 
             0x08 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.inst_pointer += 1;
             }
 
+            // 0x09	DAD B	1	CY	HL = HL + BC
             0x09 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let mut hl: u32 = ((self.registers.h as u32) << 8) | (self.registers.l as u32);
+                let bc: u32 = ((self.registers.b as u32) << 8) | (self.registers.c as u32);
+
+                hl = hl + bc;
+
+                self.flags.carry = hl > 0xffff;
+                self.registers.h = (hl >> 8) as u8;
+                self.registers.l = hl as u8;
+                self.inst_pointer += 1;
             }
 
             0x0a => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let bc: u32 = ((self.registers.b as u32) << 8) | (self.registers.c as u32);
+                self.registers.a = self.memory[bc as usize];
+
+                self.inst_pointer += 1;
             }
 
             0x0b => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let mut bc: u32 = ((self.registers.b as u32) << 8) | (self.registers.c as u32);
+                bc -= 1;
+
+                self.registers.b = (bc >> 8) as u8;
+                self.registers.c = bc as u8;
+
+                self.inst_pointer += 1;
             }
 
             0x0c => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.c = self.alu_operation(Operation::Add, self.registers.c, 0, true);
+                self.inst_pointer += 1;
             }
 
             0x0d => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.c = self.alu_operation(Operation::Sub, self.registers.c, 0, true);
+                self.inst_pointer += 1;
             }
 
             0x0e => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.c = self.memory[inst_pointer + 1];
+                self.inst_pointer += 1;
             }
 
+            // 0x0f	RRC	1	CY	A = A >> 1; bit 7 = prev bit 0; CY = prev bit 0
             0x0f => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.flags.carry = (self.registers.a & 0b00000001) == 0b00000001;
+
+                let lsb = if self.flags.carry { 1 } else { 0 };
+
+                self.registers.a = (self.registers.a >> 1) + (lsb << 7);
+                self.inst_pointer += 1;
             }
 
             _ => {

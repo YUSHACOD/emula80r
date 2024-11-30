@@ -41,7 +41,6 @@ mod tests {
         cpu.memory[0x02] = 0x12;
         cpu.memory[0x03] = 0x34;
 
-
         info!("Before execution 1");
         info!("{}", cpu.get_dbg_string());
         // Execute the LXI B instruction
@@ -54,7 +53,7 @@ mod tests {
         // Verify the result
         assert_eq!(cpu.registers.b, 0x12); // High byte
         assert_eq!(cpu.registers.c, 0x34); // Low byte
-        // assert_eq!(cpu.inst_pointer, 0x01 + 3); // Low byte
+                                           // assert_eq!(cpu.inst_pointer, 0x01 + 3); // Low byte
 
         Ok(())
     }
@@ -205,8 +204,8 @@ mod tests {
 
         // Verify the results
         assert_eq!(cpu.registers.b, 0x00);
-        assert!(cpu.flags.zero); 
-        assert!(!cpu.flags.sign); 
+        assert!(cpu.flags.zero);
+        assert!(!cpu.flags.sign);
         assert!(cpu.flags.parity);
         assert!(!cpu.flags.aux_carry);
 
@@ -221,6 +220,44 @@ mod tests {
         assert!(cpu.flags.aux_carry); // Aux carry should still be set (borrow from bit 3)
 
         cpu.get_dbg_memory()?;
+        Ok(())
+    }
+
+    #[test]
+    fn test_0x0f() -> io::Result<()> {
+        let _ = log4rs::init_config(get_config());
+
+        let mut cpu = CPU {
+            flags: ConditionFlags {
+                zero: false,
+                sign: false,
+                parity: false,
+                carry: false,
+                aux_carry: false,
+            },
+            registers: Registers {
+                a: 0b10011001,
+                b: 0,
+                c: 0,
+                d: 0,
+                e: 0,
+                h: 0,
+                l: 0,
+            },
+            stack_pointer: 0,
+            inst_pointer: 0x01,
+            memory: Box::new([0u8; 65536]),
+            enabled: true,
+            io_table: Box::new([0u8; 256]),
+            io_port: 0,
+        };
+
+        cpu.memory[0x01] = 0x0F;
+
+        cpu.execute_instruction();
+
+        assert_eq!(cpu.registers.a, 0b11001100); // Rotate right: LSB becomes MSB
+        assert!(cpu.flags.carry); // Carry is set from the original LSB
         Ok(())
     }
 }
