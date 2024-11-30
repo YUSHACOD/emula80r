@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::cpu8080::{ConditionFlags, Registers, CPU};
+    use crate::cpu8080::{ConditionFlags, Registers, Cpu};
     use crate::logging::config_builder::get_config;
     use log::info;
     use log4rs;
@@ -11,7 +11,7 @@ mod tests {
         let _ = log4rs::init_config(get_config());
 
         // Initialize CPU
-        let mut cpu = CPU {
+        let mut cpu = Cpu {
             flags: ConditionFlags {
                 zero: false,
                 sign: false,
@@ -63,7 +63,7 @@ mod tests {
         let _ = log4rs::init_config(get_config());
 
         // Initialize CPU
-        let mut cpu = CPU {
+        let mut cpu = Cpu {
             flags: ConditionFlags {
                 zero: false,
                 sign: false,
@@ -112,7 +112,7 @@ mod tests {
         let _ = log4rs::init_config(get_config());
 
         // Initialize CPU
-        let mut cpu = CPU {
+        let mut cpu = Cpu {
             flags: ConditionFlags {
                 zero: false,
                 sign: false,
@@ -165,7 +165,7 @@ mod tests {
         let _ = log4rs::init_config(get_config());
 
         // Initialize CPU
-        let mut cpu = CPU {
+        let mut cpu = Cpu {
             flags: ConditionFlags {
                 zero: false,
                 sign: false,
@@ -227,7 +227,7 @@ mod tests {
     fn test_0x0f() -> io::Result<()> {
         let _ = log4rs::init_config(get_config());
 
-        let mut cpu = CPU {
+        let mut cpu = Cpu {
             flags: ConditionFlags {
                 zero: false,
                 sign: false,

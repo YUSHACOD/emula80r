@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
     log4rs::init_config(get_config()).unwrap();
 
     info!("Creating Cpu instance.");
-    let mut cpu = cpu8080::CPU::new();
+    let mut cpu = cpu8080::Cpu::new();
     info!("Cpu instance created.");
 
     info!("{}", cpu.get_dbg_string());

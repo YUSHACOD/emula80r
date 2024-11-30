@@ -1,18 +1,20 @@
-use super::CPU;
+use super::Cpu;
 use log::error;
 
-impl CPU {
+impl Cpu {
     pub fn execute_instruction_1(&mut self) {
         let inst_pointer = self.inst_pointer as usize;
         let instruction = self.memory[inst_pointer];
 
         match instruction {
             0x10 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.inst_pointer += 1
             }
 
             0x11 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.d = self.memory[inst_pointer + 1]; 
+                self.registers.e = self.memory[inst_pointer + 2]; 
+                self.inst_pointer += 3;
             }
 
             0x12 => {

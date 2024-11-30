@@ -2,7 +2,7 @@ use crate::ioutils;
 use log::info;
 use std::io;
 
-use super::CPU;
+use super::Cpu;
 
 #[derive(Debug)]
 pub enum Operation {
@@ -10,7 +10,7 @@ pub enum Operation {
     Sub,
 }
 
-impl CPU {
+impl Cpu {
     /// Update Flags with arithmetic operation
     pub fn alu_operation(
         &mut self,

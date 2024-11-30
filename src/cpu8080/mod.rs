@@ -105,7 +105,7 @@ impl Registers {
 }
 
 /// CPU structure, basically all the things 8080 cpu requires for function
-pub struct CPU {
+pub struct Cpu {
     /// condition flags
     flags: ConditionFlags,
 
@@ -131,7 +131,7 @@ pub struct CPU {
     io_port: u16,
 }
 
-impl CPU {
+impl Cpu {
     pub fn new() -> Self {
         let flags = ConditionFlags::new();
 

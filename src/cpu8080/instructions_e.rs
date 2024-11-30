@@ -1,7 +1,7 @@
-use super::CPU;
+use super::Cpu;
 use log::error;
 
-impl CPU {
+impl Cpu {
     pub fn execute_instruction_e(&mut self) {
         let inst_pointer = self.inst_pointer as usize;
         let instruction = self.memory[inst_pointer];
