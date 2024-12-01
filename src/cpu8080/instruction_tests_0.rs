@@ -38,8 +38,8 @@ mod tests {
 
         cpu.inst_pointer = 0x01;
         cpu.memory[0x01] = 0x01;
-        cpu.memory[0x02] = 0x12;
-        cpu.memory[0x03] = 0x34;
+        cpu.memory[0x02] = 0x34;
+        cpu.memory[0x03] = 0x12;
 
         info!("Before execution 1");
         info!("{}", cpu.get_dbg_string());
