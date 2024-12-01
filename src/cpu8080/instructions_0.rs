@@ -57,7 +57,7 @@ impl Cpu {
             0x06 => {
                 self.registers.b = self.memory[inst_pointer + 1];
 
-                self.inst_pointer += 1;
+                self.inst_pointer += 2;
             }
 
             // 0x07	RLC	1	CY	A = A << 1; bit 0 = prev bit 7; CY = prev bit 7
@@ -127,7 +127,7 @@ impl Cpu {
             0x0e => {
                 self.registers.c = self.memory[inst_pointer + 1];
 
-                self.inst_pointer += 1;
+                self.inst_pointer += 2;
             }
 
             // 0x0f	RRC	1	CY	A = A >> 1; bit 7 = prev bit 0; CY = prev bit 0
