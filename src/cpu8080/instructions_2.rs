@@ -1,6 +1,6 @@
 use super::Cpu;
 use crate::cpu8080::utils::Operation;
-use log::error;
+use log::{error, info};
 
 impl Cpu {
     pub fn execute_instruction_2(&mut self) {
@@ -66,9 +66,22 @@ impl Cpu {
                 self.inst_pointer += 2
             }
 
-            // 0x27	DAA	1		special
+            // 0x27	DAA	1	Z, S, P, AC, C  Decimal Adjust Accumulator
             0x27 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                info!("DAA started beware, of demons \n{}", self.get_dbg_string());
+                if ((self.registers.a & 0x0f) > 0x09) || self.flags.aux_carry {
+                    self.registers.a =
+                        self.alu_operation(Operation::Add, self.registers.a, 0x06, false);
+                }
+
+                if ((self.registers.a >> 4) > 0x09) || self.flags.carry {
+                    self.registers.a =
+                        self.alu_operation(Operation::Add, self.registers.a, 0x60, false);
+                }
+
+                info!("DAA executed beware, of demons \n{}", self.get_dbg_string());
+
+                self.inst_pointer += 1
             }
 
             // 0x28	-
