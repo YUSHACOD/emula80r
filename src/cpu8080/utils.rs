@@ -1,13 +1,16 @@
+use super::Cpu;
 use crate::ioutils;
 use log::info;
 use std::io;
-
-use super::Cpu;
 
 #[derive(Debug)]
 pub enum Operation {
     Add,
     Sub,
+    And,
+    Xor,
+    Or,
+    Cmp,
 }
 
 impl Cpu {
@@ -32,6 +35,22 @@ impl Cpu {
                     .wrapping_sub(carry_in_value as u16);
                 (full as u8, full)
             }
+            Operation::And => {
+                let full = (operand1 as u16) & (operand2 as u16);
+                (full as u8, full)
+            }
+            Operation::Xor => {
+                let full = (operand1 as u16) ^ (operand2 as u16);
+                (full as u8, full)
+            }
+            Operation::Or => {
+                let full = (operand1 as u16) | (operand2 as u16);
+                (full as u8, full)
+            }
+            Operation::Cmp => {
+                let full = (operand1 as u16).wrapping_sub(operand2 as u16);
+                (full as u8, full)
+            }
         };
 
         self.flags.zero = result == 0;
@@ -40,7 +59,11 @@ impl Cpu {
 
         self.flags.parity = result.count_ones() % 2 == 0;
 
-        self.flags.carry = full_result > 0xFF;
+        self.flags.carry = match operation {
+            Operation::And | Operation::Xor | Operation::Or => false,
+            Operation::Cmp => operand1 < operand2,
+            _ => full_result > 0xFF,
+        };
 
         self.flags.aux_carry = match operation {
             Operation::Add => ((operand1 & 0x0F) + (operand2 & 0x0F) + carry_in_value) > 0x0F,
@@ -48,14 +71,25 @@ impl Cpu {
                 let borrow = (operand2 & 0x0F) + carry_in_value;
                 (operand1 & 0x0F) < borrow
             }
+            Operation::And => ((operand1 & 0x0F) & (operand2 & 0x0F)) > 0x0F,
+            Operation::Xor | Operation::Or => false,
+            Operation::Cmp => (operand1 & 0x0F) < (operand2 & 0x0F),
         };
 
-        info!("Flags updated: zero: [{}], sign: [{}], parity: [{}], carry: [{}], aux_carry: [{}]",
-              self.flags.zero, self.flags.sign, self.flags.parity, self.flags.carry, self.flags.aux_carry);
+        info!(
+            "Flags updated: zero: [{}], sign: [{}], parity: [{}], carry: [{}], aux_carry: [{}]",
+            self.flags.zero,
+            self.flags.sign,
+            self.flags.parity,
+            self.flags.carry,
+            self.flags.aux_carry
+        );
 
-        result
+        match operation {
+            Operation::Cmp => operand1,
+            _ => result,
+        }
     }
-
 
     pub fn load_program(&mut self, file_name: &str, address: u8) -> io::Result<()> {
         let mut bytes: Vec<u8> = Vec::new();
