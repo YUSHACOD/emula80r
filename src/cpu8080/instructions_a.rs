@@ -1,4 +1,5 @@
 use super::Cpu;
+use crate::cpu8080::utils::Operation;
 use log::error;
 
 impl Cpu {
@@ -9,82 +10,142 @@ impl Cpu {
         match instruction {
             // 0xa0	ANA B	1	Z, S, P, CY, AC	A <- A & B
             0xa0 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.b, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa1	ANA C	1	Z, S, P, CY, AC	A <- A & C
             0xa1 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.c, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa2	ANA D	1	Z, S, P, CY, AC	A <- A & D
             0xa2 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.d, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa3	ANA E	1	Z, S, P, CY, AC	A <- A & E
             0xa3 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.e, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa4	ANA H	1	Z, S, P, CY, AC	A <- A & H
             0xa4 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.h, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa5	ANA L	1	Z, S, P, CY, AC	A <- A & L
             0xa5 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.l, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa6	ANA M	1	Z, S, P, CY, AC	A <- A & (HL)
             0xa6 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.registers.l;
+                let upper8 = self.registers.h;
+
+                let location = ((upper8 as u16) << 8) | (lower8 as u16);
+                let value = self.memory[location as usize];
+
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, value, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa7	ANA A	1	Z, S, P, CY, AC	A <- A & A
             0xa7 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::And, self.registers.a, self.registers.a, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa8	XRA B	1	Z, S, P, CY, AC	A <- A ^ B
             0xa8 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.b, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xa9	XRA C	1	Z, S, P, CY, AC	A <- A ^ C
             0xa9 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.c, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xaa	XRA D	1	Z, S, P, CY, AC	A <- A ^ D
             0xaa => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.d, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xab	XRA E	1	Z, S, P, CY, AC	A <- A ^ E
             0xab => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.e, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xac	XRA H	1	Z, S, P, CY, AC	A <- A ^ H
             0xac => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.h, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xad	XRA L	1	Z, S, P, CY, AC	A <- A ^ L
             0xad => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.l, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xae	XRA M	1	Z, S, P, CY, AC	A <- A ^ (HL)
             0xae => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.registers.l;
+                let upper8 = self.registers.h;
+
+                let location = ((upper8 as u16) << 8) | (lower8 as u16);
+                let value = self.memory[location as usize];
+
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, value, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xaf	XRA A	1	Z, S, P, CY, AC	A <- A ^ A
             0xaf => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Xor, self.registers.a, self.registers.a, false);
+
+                self.inst_pointer += 1;
             }
 
             _ => {

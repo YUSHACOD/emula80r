@@ -1,4 +1,5 @@
 use super::Cpu;
+use crate::cpu8080::utils::Operation;
 use log::error;
 
 impl Cpu {
@@ -9,82 +10,142 @@ impl Cpu {
         match instruction {
             // 0xb0	ORA B	1	Z, S, P, CY, AC	A <- A | B
             0xb0 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.b, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb1	ORA C	1	Z, S, P, CY, AC	A <- A | C
             0xb1 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.c, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb2	ORA D	1	Z, S, P, CY, AC	A <- A | D
             0xb2 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.d, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb3	ORA E	1	Z, S, P, CY, AC	A <- A | E
             0xb3 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.e, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb4	ORA H	1	Z, S, P, CY, AC	A <- A | H
             0xb4 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.h, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb5	ORA L	1	Z, S, P, CY, AC	A <- A | L
             0xb5 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.l, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb6	ORA M	1	Z, S, P, CY, AC	A <- A | (HL)
             0xb6 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.registers.l;
+                let upper8 = self.registers.h;
+
+                let location = ((upper8 as u16) << 8) | (lower8 as u16);
+                let value = self.memory[location as usize];
+
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, value, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb7	ORA A	1	Z, S, P, CY, AC	A <- A | A
             0xb7 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, self.registers.a, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb8	CMP B	1	Z, S, P, CY, AC	A - B
             0xb8 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.b, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xb9	CMP C	1	Z, S, P, CY, AC	A - C
             0xb9 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.c, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xba	CMP D	1	Z, S, P, CY, AC	A - D
             0xba => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.d, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xbb	CMP E	1	Z, S, P, CY, AC	A - E
             0xbb => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.e, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xbc	CMP H	1	Z, S, P, CY, AC	A - H
             0xbc => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.h, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xbd	CMP L	1	Z, S, P, CY, AC	A - L
             0xbd => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.l, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xbe	CMP M	1	Z, S, P, CY, AC	A - (HL)
             0xbe => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.registers.l;
+                let upper8 = self.registers.h;
+
+                let location = ((upper8 as u16) << 8) | (lower8 as u16);
+                let value = self.memory[location as usize];
+
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, value, false);
+
+                self.inst_pointer += 1;
             }
 
             // 0xbf	CMP A	1	Z, S, P, CY, AC	A - A
             0xbf => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, self.registers.a, false);
+
+                self.inst_pointer += 1;
             }
 
             _ => {
