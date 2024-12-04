@@ -111,7 +111,7 @@ impl Cpu {
                 self.inst_pointer += 1;
             }
 
-            // 0x1c	INR E	1	Z, S, P, AC	E <-E+1
+            // 0x1c	INR E	1	Z, S, P, AC	E <- E+1
             0x1c => {
                 self.registers.e = self.alu_operation(Operation::Add, self.registers.e, 0, true);
 

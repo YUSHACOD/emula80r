@@ -42,7 +42,7 @@ impl Cpu {
 
                     self.inst_pointer = ((upper8 as u16) << 8) | (lower8 as u16);
                 } else {
-                    self.inst_pointer += 1;
+                    self.inst_pointer += 3;
                 }
             }
 
@@ -96,6 +96,7 @@ impl Cpu {
             }
 
             // 0xc7	RST 0	1		CALL $0
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xc7 => {
                 let lower8 = self.inst_pointer as u8;
                 let upper8 = (self.inst_pointer >> 8) as u8;
@@ -109,6 +110,7 @@ impl Cpu {
             }
 
             // 0xc8	RZ	1		if Z, RET
+            // PC.lo <- (sp); PC.hi<-(sp+1); SP <- SP+2
             0xc8 => {
                 if self.flags.zero {
                     let lower8 = self.memory[self.stack_pointer as usize];
@@ -152,6 +154,7 @@ impl Cpu {
             }
 
             // 0xcc	CZ adr	3		if Z, CALL adr
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xcc => {
                 if self.flags.zero {
                     let lower8 = self.inst_pointer as u8;
@@ -172,7 +175,8 @@ impl Cpu {
                 }
             }
 
-            // 0xcd	CALL adr	3		(SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
+            // 0xcd	CALL adr	3
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xcd => {
                 let lower8 = self.inst_pointer as u8;
                 let upper8 = (self.inst_pointer >> 8) as u8;
@@ -199,6 +203,7 @@ impl Cpu {
             }
 
             // 0xcf	RST 1	1		CALL $8
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xcf => {
                 let lower8 = self.inst_pointer as u8;
                 let upper8 = (self.inst_pointer >> 8) as u8;

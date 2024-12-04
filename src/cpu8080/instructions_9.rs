@@ -40,7 +40,7 @@ impl Cpu {
                 self.inst_pointer += 1;
             }
 
-            // 0x94	SUB H	1	Z, S, P, CY, AC	A <- A + H
+            // 0x94	SUB H	1	Z, S, P, CY, AC	A <- A - H
             0x94 => {
                 self.registers.a =
                     self.alu_operation(Operation::Sub, self.registers.a, self.registers.h, false);
@@ -56,7 +56,7 @@ impl Cpu {
                 self.inst_pointer += 1;
             }
 
-            // 0x96	SUB M	1	Z, S, P, CY, AC	A <- A + (HL)
+            // 0x96	SUB M	1	Z, S, P, CY, AC	A <- A - (HL)
             0x96 => {
                 let lower8 = self.registers.l;
                 let upper8 = self.registers.h;

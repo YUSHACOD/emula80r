@@ -89,7 +89,7 @@ impl Cpu {
                 self.inst_pointer += 1;
             }
 
-            // 0x29	DAD H	1	CY	HL = HL + HI
+            // 0x29	DAD H	1	CY	HL = HL + HL
             0x29 => {
                 let mut hl: u32 = ((self.registers.h as u32) << 8) | (self.registers.l as u32);
 
@@ -102,7 +102,7 @@ impl Cpu {
                 self.inst_pointer += 1;
             }
 
-            // 0x2a	LHLD adr	3		L <- (adr); H<-(adr+1)
+            // 0x2a	LHLD adr	3		L <- (adr); H <- (adr+1)
             0x2a => {
                 let lower8 = self.memory[inst_pointer + 1];
                 let upper8 = self.memory[inst_pointer + 2];

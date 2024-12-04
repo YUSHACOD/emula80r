@@ -9,6 +9,7 @@ impl Cpu {
 
         match instruction {
             // 0xe0	RPO	1		if PO, RET
+            // PC.lo <- (sp); PC.hi<-(sp+1); SP <- SP+2
             0xe0 => {
                 if !self.flags.parity {
                     let lower8 = self.memory[self.stack_pointer as usize];
@@ -41,7 +42,7 @@ impl Cpu {
 
                     self.inst_pointer = ((upper8 as u16) << 8) | (lower8 as u16);
                 } else {
-                    self.inst_pointer += 1;
+                    self.inst_pointer += 3;
                 }
             }
 
@@ -60,6 +61,7 @@ impl Cpu {
             }
 
             // 0xe4	CPO adr	3		if PO, CALL adr
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xe4 => {
                 if !self.flags.parity {
                     let lower8 = self.inst_pointer as u8;
@@ -100,6 +102,7 @@ impl Cpu {
             }
 
             // 0xe7	RST 4	1		CALL $20
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xe7 => {
                 let lower8 = self.inst_pointer as u8;
                 let upper8 = (self.inst_pointer >> 8) as u8;
@@ -113,6 +116,7 @@ impl Cpu {
             }
 
             // 0xe8	RPE	1		if PE, RET
+            // PC.lo <- (sp); PC.hi<-(sp+1); SP <- SP+2
             0xe8 => {
                 if self.flags.parity {
                     let lower8 = self.memory[self.stack_pointer as usize];
@@ -159,6 +163,7 @@ impl Cpu {
             }
 
             // 0xec	CPE adr	3		if PE, CALL adr
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xec => {
                 if self.flags.parity {
                     let lower8 = self.inst_pointer as u8;
@@ -194,6 +199,7 @@ impl Cpu {
             }
 
             // 0xef	RST 5	1		CALL $28
+            // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xef => {
                 let lower8 = self.inst_pointer as u8;
                 let upper8 = (self.inst_pointer >> 8) as u8;

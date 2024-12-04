@@ -82,7 +82,7 @@ impl Cpu {
             // 0x76	HLT	1		special
             0x76 => {
                 info!(
-                    "this is halt need better handling,\n{}",
+                    "halt, this is halt need better handling,\n{}",
                     self.get_dbg_string()
                 );
                 self.enabled = false;
