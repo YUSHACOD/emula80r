@@ -1,4 +1,5 @@
 use super::Cpu;
+use crate::cpu8080::utils::Operation;
 use log::error;
 
 impl Cpu {
@@ -9,82 +10,203 @@ impl Cpu {
         match instruction {
             // 0xf0	RP	1		if P, RET
             0xf0 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if !self.flags.sign {
+                    let lower8 = self.memory[self.stack_pointer as usize];
+                    let upper8 = self.memory[self.stack_pointer as usize + 1];
+
+                    self.stack_pointer += 2;
+
+                    let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+                    self.inst_pointer = pointer;
+                } else {
+                    self.inst_pointer += 1;
+                }
             }
 
             // 0xf1	POP PSW	1		flags <- (sp); A <- (sp+1); sp <- sp+2
             0xf1 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.registers.a = self.memory[self.stack_pointer as usize + 1];
+                let value = self.memory[self.stack_pointer as usize];
+
+                self.flags.zero = (value & 0b10000000) == 0b10000000;
+                self.flags.sign = (value & 0b01000000) == 0b01000000;
+                self.flags.parity = (value & 0b00100000) == 0b00100000;
+                self.flags.carry = (value & 0b00010000) == 0b00010000;
+                self.flags.aux_carry = (value & 0b00001000) == 0b00001000;
+
+                self.inst_pointer += 1;
             }
 
             // 0xf2	JP adr	3		if P=1 PC <- adr
             0xf2 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if !self.flags.sign {
+                    let lower8 = self.memory[inst_pointer + 1];
+                    let upper8 = self.memory[inst_pointer + 2];
+
+                    self.inst_pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+                } else {
+                    self.inst_pointer += 1;
+                }
             }
 
             // 0xf3	DI	1		special
             0xf3 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.interupts_enabled = false;
+
+                self.inst_pointer += 1;
             }
 
             // 0xf4	CP adr	3		if P, PC <- adr
             0xf4 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if !self.flags.sign {
+                    let lower8 = self.memory[inst_pointer + 1];
+                    let upper8 = self.memory[inst_pointer + 2];
+
+                    let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+
+                    self.inst_pointer = pointer;
+                } else {
+                    self.inst_pointer += 3;
+                }
             }
 
             // 0xf5	PUSH PSW	1		(sp-2)<-flags; (sp-1)<-A; sp <- sp - 2
             0xf5 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let mut value: u8 = 0;
+
+                if self.flags.zero {
+                    value |= 0b10000000;
+                }
+                if self.flags.sign {
+                    value |= 0b01000000;
+                }
+                if self.flags.parity {
+                    value |= 0b00100000;
+                }
+                if self.flags.carry {
+                    value |= 0b00010000;
+                }
+                if self.flags.aux_carry {
+                    value |= 0b00001000;
+                }
+
+                self.memory[self.stack_pointer as usize - 1] = self.registers.a;
+                self.memory[self.stack_pointer as usize - 2] = value;
+
+                self.stack_pointer -= 2;
+
+                self.inst_pointer += 1;
             }
 
             // 0xf6	ORI D8	2	Z, S, P, CY, AC	A <- A | data
             0xf6 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let value = self.memory[inst_pointer + 1];
+                self.registers.a =
+                    self.alu_operation(Operation::Or, self.registers.a, value, false);
+
+                self.inst_pointer += 2;
             }
 
             // 0xf7	RST 6	1		CALL $30
             0xf7 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.inst_pointer as u8;
+                let upper8 = (self.inst_pointer >> 8) as u8;
+
+                self.memory[self.stack_pointer as usize - 1] = upper8;
+                self.memory[self.stack_pointer as usize - 2] = lower8;
+
+                self.stack_pointer -= 2;
+
+                self.inst_pointer = 0x0030;
             }
 
             // 0xf8	RM	1		if M, RET
             0xf8 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if self.flags.sign {
+                    let lower8 = self.memory[self.stack_pointer as usize];
+                    let upper8 = self.memory[self.stack_pointer as usize + 1];
+
+                    self.stack_pointer += 2;
+
+                    let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+                    self.inst_pointer = pointer;
+                } else {
+                    self.inst_pointer += 1;
+                }
             }
 
             // 0xf9	SPHL	1		SP=HL
             0xf9 => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.stack_pointer = (self.registers.h as u16) << 8 | (self.registers.l as u16);
+
+                self.inst_pointer += 1;
             }
 
             // 0xfa	JM adr	3		if M, PC <- adr
             0xfa => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if self.flags.sign {
+                    let lower8 = self.memory[inst_pointer + 1];
+                    let upper8 = self.memory[inst_pointer + 2];
+
+                    self.inst_pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+                } else {
+                    self.inst_pointer += 3;
+                }
             }
 
             // 0xfb	EI	1		special
             0xfb => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.interupts_enabled = true;
+
+                self.inst_pointer += 1;
             }
 
             // 0xfc	CM adr	3		if M, CALL adr
             0xfc => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                if self.flags.sign {
+                    let lower8 = self.inst_pointer as u8;
+                    let upper8 = (self.inst_pointer >> 8) as u8;
+
+                    self.memory[self.stack_pointer as usize - 1] = upper8;
+                    self.memory[self.stack_pointer as usize - 2] = lower8;
+
+                    self.stack_pointer -= 2;
+
+                    let lower8 = self.memory[inst_pointer + 1];
+                    let upper8 = self.memory[inst_pointer + 2];
+                    let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+
+                    self.inst_pointer = pointer;
+                } else {
+                    self.inst_pointer += 3;
+                }
             }
 
-            // 0xfd	-			
+            // 0xfd	-
             0xfd => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                self.inst_pointer += 1;
             }
 
             // 0xfe	CPI D8	2	Z, S, P, CY, AC	A - data
             0xfe => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let value = self.memory[inst_pointer + 1];
+                self.registers.a =
+                    self.alu_operation(Operation::Cmp, self.registers.a, value, false);
+
+                self.inst_pointer += 2;
             }
 
             // 0xff	RST 7	1		CALL $38
             0xff => {
-                error!("unimplemented instruction : {:02X}", instruction,);
+                let lower8 = self.inst_pointer as u8;
+                let upper8 = (self.inst_pointer >> 8) as u8;
+
+                self.memory[self.stack_pointer as usize - 1] = upper8;
+                self.memory[self.stack_pointer as usize - 2] = lower8;
+
+                self.stack_pointer -= 2;
+
+                self.inst_pointer = 0x0038;
             }
 
             _ => {

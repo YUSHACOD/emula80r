@@ -124,6 +124,9 @@ pub struct Cpu {
     /// enable, disable flag
     enabled: bool,
 
+    /// interupts status
+    interupts_enabled: bool,
+
     /// io table
     io_table: Box<[u8; 256]>,
 
@@ -150,6 +153,7 @@ impl Cpu {
             io_table,
             io_port: 0,
             enabled: false,
+            interupts_enabled: true,
         }
     }
 
