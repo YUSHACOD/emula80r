@@ -161,7 +161,11 @@ impl Cpu {
         self.inst_pointer = pointer;
     }
 
-    pub fn enable_cpu(&mut self) {
+    pub fn enable(&mut self) {
+        self.enabled = true;
+    }
+
+    pub fn disable(&mut self) {
         self.enabled = true;
     }
 

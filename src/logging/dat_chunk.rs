@@ -26,7 +26,9 @@ pub fn dump_data(data: &[u8], type_str: &str) -> String {
         // Write the ASCII representation
         result.push('|');
         for byte in chunk {
-            if byte.is_ascii_graphic() || byte.is_ascii_whitespace() {
+            let condition =
+                byte.is_ascii_digit() || byte.is_ascii_alphabetic() || byte.is_ascii_punctuation();
+            if condition {
                 result.push(*byte as char);
             } else {
                 result.push('.');

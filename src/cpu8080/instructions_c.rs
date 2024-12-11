@@ -1,6 +1,8 @@
+use std::{process::exit, usize};
+
 use super::Cpu;
 use crate::cpu8080::utils::Operation;
-use log::error;
+use log::{error, info};
 
 impl Cpu {
     pub fn execute_instruction_c(&mut self) {
@@ -178,19 +180,53 @@ impl Cpu {
             // 0xcd	CALL adr	3
             // (SP-1)<-PC.hi;(SP-2)<-PC.lo;SP<-SP-2;PC=adr
             0xcd => {
-                let lower8 = self.inst_pointer as u8;
-                let upper8 = (self.inst_pointer >> 8) as u8;
-
-                self.memory[self.stack_pointer as usize - 1] = upper8;
-                self.memory[self.stack_pointer as usize - 2] = lower8;
-
-                self.stack_pointer -= 2;
-
                 let lower8 = self.memory[inst_pointer + 1];
                 let upper8 = self.memory[inst_pointer + 2];
                 let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
 
-                self.inst_pointer = pointer;
+                if pointer == 0x05 {
+                    if self.registers.c == 0x09 {
+                        let lower8 = self.registers.d;
+                        let upper8 = self.registers.e;
+                        let mut pointer = (((upper8 as u16) << 8) | (lower8 as u16)) as usize;
+                        pointer += 3;
+
+                        let mut result = String::new();
+                        let mut i = 0;
+                        while self.memory[pointer] != '$' as u8 && i < 100 {
+                            result.push(self.memory[pointer] as char);
+                            info!("{}", result);
+                            pointer += 1;
+                            i += 1;
+                        }
+
+                        info!("{}", result);
+                    } else if self.registers.c == 2 {
+                        info!("unused c == 2 routine called")
+                    }
+                } else if pointer == 0 {
+                    error!("Exectuion Ended in Print Call");
+                    let _ = self.get_dbg_memory();
+                    let _ = self.get_dbg_io_table();
+                    let _ = self.dump_memory_to_file();
+                    let _ = self.dump_io_table_to_file();
+                    error!("All debug written. Test ended");
+                    exit(2);
+                } else {
+                    let lower8 = self.inst_pointer as u8;
+                    let upper8 = (self.inst_pointer >> 8) as u8;
+
+                    self.memory[self.stack_pointer as usize - 1] = upper8;
+                    self.memory[self.stack_pointer as usize - 2] = lower8;
+
+                    self.stack_pointer -= 2;
+
+                    let lower8 = self.memory[inst_pointer + 1];
+                    let upper8 = self.memory[inst_pointer + 2];
+                    let pointer = ((upper8 as u16) << 8) | (lower8 as u16);
+
+                    self.inst_pointer = pointer;
+                }
             }
 
             // 0xce	ACI D8	2	Z, S, P, CY, AC	A <- A + data + CY
