@@ -91,13 +91,17 @@ impl Cpu {
         }
     }
 
-    pub fn load_program(&mut self, file_name: &str, address: u8) -> io::Result<()> {
+    pub fn load_program(&mut self, file_name: &str, address: u16) -> io::Result<()> {
         let mut bytes: Vec<u8> = Vec::new();
-        ioutils::read_file(file_name.to_string(), bytes.as_mut())?;
+        ioutils::read_file(file_name, bytes.as_mut())?;
 
         for i in 0..bytes.len() {
             self.memory[i + address as usize] = bytes[i];
         }
+
+        // HLT after the all is done
+        self.memory[bytes.len()] = 0x76;
+
         info!("Loaded Program");
 
         Ok(())

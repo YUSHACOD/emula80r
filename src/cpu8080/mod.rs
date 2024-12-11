@@ -119,7 +119,7 @@ pub struct Cpu {
     inst_pointer: u16,
 
     /// memory aka ram
-    memory: Box<[u8; 65536]>,
+    pub memory: Box<[u8; 65536]>,
 
     /// enable, disable flag
     enabled: bool,
@@ -128,10 +128,10 @@ pub struct Cpu {
     interupts_enabled: bool,
 
     /// io table
-    io_table: Box<[u8; 256]>,
+    pub io_table: Box<[u8; 256]>,
 
     /// io port
-    io_port: u16,
+    pub io_port: u16,
 }
 
 impl Cpu {
@@ -157,6 +157,18 @@ impl Cpu {
         }
     }
 
+    pub fn set_pc(&mut self, pointer: u16) {
+        self.inst_pointer = pointer;
+    }
+
+    pub fn enable_cpu(&mut self) {
+        self.enabled = true;
+    }
+
+    pub fn on(&self) -> bool {
+        self.enabled
+    }
+
     pub fn get_dbg_string(&self) -> String {
         format!(
             "
@@ -166,6 +178,7 @@ impl Cpu {
 \t{}\n
 \t[Stack Pointer]:\t[0x{:04X}]\n
 \t[Instruction Pointer]:\t[0x{:04X}]\n
+\t[Instruction]:\t\t[0x{:02X}]\n
 \t[Io Port]:\t\t[0x{:02X}]\n
 \t[Enabled]:\t\t[{}]
 +++++++++++++++++++++++++++++++++++++++
@@ -174,6 +187,7 @@ impl Cpu {
             &self.registers.get_dbg_string(),
             &self.stack_pointer,
             &self.inst_pointer,
+            &self.memory[self.inst_pointer as usize],
             &self.io_port,
             &self.enabled
         )

@@ -3,7 +3,7 @@ use std::{
     io::{Read, Write},
 };
 
-pub fn read_file(filename: String, bytes: &mut Vec<u8>) -> std::io::Result<usize> {
+pub fn read_file(filename: &str, bytes: &mut Vec<u8>) -> std::io::Result<usize> {
     let mut file = Some(OpenOptions::new().read(true).open(filename)?);
 
     match &mut file {

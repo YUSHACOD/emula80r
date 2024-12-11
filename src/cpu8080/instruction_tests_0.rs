@@ -32,6 +32,7 @@ mod tests {
             inst_pointer: 0,
             memory: Box::new([0u8; 65536]),
             enabled: true,
+            interupts_enabled: true,
             io_table: Box::new([0u8; 256]),
             io_port: 0,
         };
@@ -84,6 +85,7 @@ mod tests {
             inst_pointer: 0,
             memory: Box::new([0u8; 65536]),
             enabled: true,
+            interupts_enabled: true,
             io_table: Box::new([0u8; 256]),
             io_port: 0,
         };
@@ -133,6 +135,7 @@ mod tests {
             inst_pointer: 0x01,
             memory: Box::new([0u8; 65536]),
             enabled: true,
+            interupts_enabled: true,
             io_table: Box::new([0u8; 256]),
             io_port: 0,
         };
@@ -186,6 +189,7 @@ mod tests {
             inst_pointer: 0x01,
             memory: Box::new([0u8; 65536]),
             enabled: true,
+            interupts_enabled: true,
             io_table: Box::new([0u8; 256]),
             io_port: 0,
         };
@@ -248,6 +252,7 @@ mod tests {
             inst_pointer: 0x01,
             memory: Box::new([0u8; 65536]),
             enabled: true,
+            interupts_enabled: true,
             io_table: Box::new([0u8; 256]),
             io_port: 0,
         };
