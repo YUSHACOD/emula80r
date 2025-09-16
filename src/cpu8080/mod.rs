@@ -106,31 +106,22 @@ impl Registers {
 
 /// CPU structure, basically all the things 8080 cpu requires for function
 pub struct Cpu {
-    /// condition flags
     flags: ConditionFlags,
 
-    /// registers
     registers: Registers,
 
-    /// stack pointer
     stack_pointer: u16,
 
-    /// instruction pointer, or program counter
     inst_pointer: u16,
 
-    /// memory aka ram
     pub memory: Box<[u8; 65536]>,
 
-    /// enable, disable flag
     enabled: bool,
 
-    /// interupts status
     interupts_enabled: bool,
 
-    /// io table
     pub io_table: Box<[u8; 256]>,
 
-    /// io port
     pub io_port: u16,
 }
 
